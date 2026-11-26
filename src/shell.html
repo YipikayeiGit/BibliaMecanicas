@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Biblia de mecánicas de juego</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* VOICE: enciclopedia de diseñador, juguetona pero precisa
+   IDEA: un catálogo de cartuchos; cada ficha es una consola diminuta que se enciende
+   PICTURE: las propias pantallas jugables; en cabecera, un índice de 19 cartuchos de color
+   COLOUR and TYPE: noche tinta #0c0d17, cada familia su color; Chakra Petch + Inter
+   LAYOUT: cabecera con índice, barra fija de búsqueda y filtros, secciones con rejilla de fichas */
+:root{color-scheme:dark;--bg:#0c0d17;--ink:#ecebf5;--mut:#a3a5c2;--card:#151729;--line:#262a42;--deep:#0f1120}
+*{box-sizing:border-box;min-width:0}[hidden]{display:none!important}
+html{scroll-padding-top:16px}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 Inter,system-ui,sans-serif;overflow-x:clip}
+button{font:inherit;color:inherit}
+.hero{padding:clamp(28px,5vw,64px) max(5vw,16px) clamp(20px,3vw,36px);background:radial-gradient(120% 90% at 85% 0%,#1c2050 0%,transparent 60%),radial-gradient(90% 80% at 0% 100%,#2a1336 0%,transparent 55%)}
+.hero-in{max-width:1240px;margin:0 auto;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.1fr);gap:clamp(20px,4vw,48px);align-items:center}
+h1{font:700 clamp(36px,6vw,58px)/1.02 'Chakra Petch',sans-serif;margin:0 0 14px;text-wrap:balance;letter-spacing:-.01em}
+.lead{font-size:17px;color:#d4d4e6;margin:0 0 16px;max-width:52ch}
+.keys{font-size:14px;color:var(--mut);margin:0}
+.keys kbd{font:600 12.5px Inter,sans-serif;background:#23263f;border:1px solid #33385a;border-bottom-width:2px;border-radius:5px;padding:1px 6px;color:var(--ink)}
+.index{display:grid;grid-template-columns:repeat(auto-fill,minmax(118px,1fr));gap:8px}
+.index a{display:flex;flex-direction:column;justify-content:space-between;min-height:68px;padding:9px 10px 8px;border-radius:10px;background:var(--c);color:#12131f;text-decoration:none;box-shadow:inset 0 -4px 0 rgba(0,0,0,.18),0 6px 14px -8px var(--c);transition:transform .15s}
+.index a:hover{transform:translateY(-2px)}
+.index b{font:700 15px/1.1 'Chakra Petch',sans-serif}
+.index span{font-size:13px;font-weight:600;opacity:.75}
+.search{flex:1 1 220px;display:flex;align-items:center;gap:8px;background:#181a2e;border:1px solid #2c3050;border-radius:12px;padding:0 12px;min-height:44px}
+.search:focus-within{border-color:#6d74c9;box-shadow:0 0 0 3px #6d74c933}
+.search input{flex:1;background:none;border:0;outline:0;color:var(--ink);font:16px Inter,sans-serif;min-height:42px}
+.search svg{flex:none;opacity:.6}
+.btn{min-height:44px;padding:0 16px;border-radius:12px;border:1px solid #2c3050;background:#1e2140;font-weight:600;font-size:15px;cursor:pointer}
+.btn:hover{background:#262a52}.btn:focus-visible,.card button:focus-visible,.index a:focus-visible{outline:3px solid #ffd447;outline-offset:2px}
+.count{font-size:14px;color:var(--mut);white-space:nowrap}
+main{padding:0 0 64px}
+.layout{max-width:1440px;margin:0 auto;display:grid;grid-template-columns:268px minmax(0,1fr);gap:28px;padding:0 max(3vw,16px)}
+.side{position:sticky;top:0;align-self:start;max-height:100vh;overflow-y:auto;padding:18px 6px 40px 0;scrollbar-width:thin;scrollbar-color:#2c3050 transparent}
+.sbox{display:flex;flex-direction:column;gap:8px;margin-bottom:12px;position:sticky;top:-18px;background:var(--bg);padding:18px 0 10px;margin-top:-18px;z-index:2}
+.shead{display:none;align-items:center;justify-content:space-between}.shead b{font:700 20px 'Chakra Petch',sans-serif}
+.x{width:40px;height:40px;border-radius:10px;border:1px solid #2c3050;background:#1e2140;cursor:pointer;font-size:16px}
+.sbox .search{flex:none}.srow{display:flex;align-items:center;gap:10px}.srow .btn{flex:none}
+.ch,.sh{position:relative;padding-right:52px}.ctg{position:absolute;right:0;top:-2px;width:40px;height:40px;border-radius:10px;border:1px solid var(--line);background:#161a2c;color:var(--c);display:grid;place-items:center;cursor:pointer}.ctg:hover{background:#1e2240}.ctg:focus-visible{outline:3px solid #ffd447;outline-offset:2px}.ctg svg{transition:transform .15s}
+.cat.closed>.ch{margin-bottom:0}.cat.closed .ctg svg,.sub.closed .ctg svg{transform:rotate(-90deg)}.cat.closed>.cbody{display:none}.sub.closed>.grid{display:none}.sub.closed>.sh{margin-bottom:0}
+#main.q .cat.closed>.cbody{display:block}#main.q .sub.closed>.grid{display:grid}#main.q .ctg{visibility:hidden}
+.mtools{display:flex;justify-content:flex-end;gap:8px;flex-wrap:wrap}.mtools button{min-height:36px;padding:0 14px;border:1px solid var(--line);background:transparent;color:var(--mut);border-radius:10px;font:inherit;font-size:13.5px;font-weight:600;cursor:pointer}.mtools button:hover{color:var(--ink);background:#181b30}.mtools button:focus-visible{outline:3px solid #ffd447;outline-offset:2px}
+.toc .tc{margin-bottom:4px}
+.toc .tbar{display:flex;gap:6px;margin:0 0 8px}.toc .tbar button{flex:1;min-height:32px;border:1px solid var(--line);background:transparent;color:var(--mut);border-radius:8px;font:inherit;font-size:12.5px;font-weight:600;cursor:pointer}.toc .tbar button:hover{color:var(--ink);background:#181b30}.toc .tbar button:focus-visible,.toc .tg:focus-visible{outline:3px solid #ffd447;outline-offset:-2px}
+.toc .tch{display:flex;align-items:center;gap:2px}.toc .tch a{flex:1;min-width:0}.toc .tc:not(.has) .tch a{margin-right:34px}
+.toc .tg{flex:none;width:32px;height:34px;border:0;background:transparent;color:var(--mut);border-radius:8px;cursor:pointer;display:grid;place-items:center}.toc .tg:hover{background:#181b30;color:var(--ink)}.toc .tg svg{transition:transform .15s}.toc .tc.open .tg svg{transform:rotate(90deg)}
+.toc .ts{display:none}.toc .tc.open .ts,.toc.q .ts{display:block}.toc.q .tg{visibility:hidden}
+
+.toc a{display:flex;align-items:center;gap:8px;padding:6px 8px;border-radius:8px;color:#d4d4e6;text-decoration:none;font-size:14.5px;font-weight:600;min-height:36px;line-height:1.2}
+.toc a span{margin-left:auto;font-size:12.5px;color:var(--mut);font-weight:500;padding-left:6px}
+.toc i{width:10px;height:10px;border-radius:3px;background:var(--c);flex:none}
+.toc .ts{margin:0 0 6px 12px;padding-left:10px;border-left:2px solid var(--line)}
+.toc .ts a{font-weight:500;font-size:13.5px;min-height:32px;color:#b9bad2}
+.toc a:hover{background:#181b30}.toc a.on{background:#1c2040;color:var(--c)}.toc .ts a.on{background:transparent;color:var(--c);box-shadow:inset 2px 0 0 var(--c);margin-left:-12px;padding-left:20px}
+.toc a:focus-visible{outline:3px solid #ffd447;outline-offset:-2px}
+.tabs{display:grid;grid-template-columns:1fr 1fr;gap:4px;background:#14162a;border:1px solid var(--line);border-radius:12px;padding:4px}
+.tab{min-height:38px;border:0;border-radius:9px;background:transparent;color:var(--mut);font-weight:600;font-size:14px;cursor:pointer}.tab[aria-selected=true]{background:#262b52;color:var(--ink)}.tab span{font-weight:500;font-size:12px;opacity:.8}.tab:focus-visible{outline:3px solid #ffd447;outline-offset:-2px}
+.gtools{display:flex;flex-direction:column;gap:8px;margin-bottom:8px}.gtools .search{flex:none}
+.gsort{display:flex;gap:6px}.gsort button{flex:1;min-height:34px;border-radius:9px;border:1px solid var(--line);background:transparent;color:var(--mut);font-weight:600;font-size:13px;cursor:pointer}.gsort button.on{background:#1e2140;color:var(--ink);border-color:#3a4070}
+.glist button{display:flex;width:100%;align-items:center;gap:8px;padding:6px 8px;min-height:34px;border:0;background:transparent;color:#d4d4e6;font:inherit;font-size:14px;font-weight:500;text-align:left;border-radius:8px;cursor:pointer;line-height:1.25}
+.glist button span{margin-left:auto;color:var(--mut);font-size:12.5px;padding-left:6px}.glist button:hover{background:#181b30}.glist button.on{background:#1c2040;color:#ffd447}.glist button:focus-visible{outline:3px solid #ffd447;outline-offset:-2px}
+.glist .gh{font-size:11.5px;color:var(--mut);text-transform:uppercase;letter-spacing:.08em;margin:12px 8px 4px;font-weight:700}.glist .none{color:var(--mut);padding:8px;font-size:14px}
+.gl{all:unset;cursor:pointer;color:#d8d9ec;text-decoration:underline;text-decoration-color:#ffffff38;text-underline-offset:3px}.gl:hover{color:var(--c);text-decoration-color:currentColor}.gl:focus-visible{outline:2px solid #ffd447;outline-offset:2px;border-radius:3px}
+.gbar{display:flex;align-items:center;gap:6px 14px;flex-wrap:wrap;margin:0 0 22px;padding:14px 16px;border:1px solid #3a4070;background:#161936;border-radius:14px}.gbar small{display:block;color:var(--mut);font-size:12px;text-transform:uppercase;letter-spacing:.08em;font-weight:700}.gbar b{font-family:'Chakra Petch',sans-serif;font-size:22px;line-height:1.15}.gbar .gn{color:var(--mut);font-size:14px}.gbar .btn{margin-left:auto}
+.mbar{display:none}.scrim{position:fixed;inset:0;background:#0008;z-index:40}
+@media(max-width:980px){.layout{grid-template-columns:minmax(0,1fr)}.side{position:fixed;top:0;left:0;bottom:0;align-self:stretch;height:100%;width:min(330px,88vw);max-height:none;z-index:50;background:#10121f;border-right:1px solid var(--line);padding:0 14px 40px;transform:translateX(-102%);transition:transform .2s ease;overscroll-behavior:contain}.side.open{transform:none;box-shadow:20px 0 40px #0008}.sbox{top:0;margin-top:0;padding-top:14px;background:#10121f}.shead{display:flex}
+.mbar{display:flex;gap:8px;position:sticky;top:0;z-index:30;padding:8px max(3vw,12px);background:rgba(12,13,23,.94);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}.mbar .btn{display:flex;align-items:center;gap:8px;flex:none}.mbar .search{flex:1}html{scroll-padding-top:70px}}
+.cat{padding-top:clamp(28px,4vw,44px)}
+.ch{display:grid;grid-template-columns:auto auto 1fr;align-items:baseline;gap:4px 12px;margin-bottom:16px;border-bottom:2px solid var(--c);padding-bottom:10px}
+.ch h2{font:700 clamp(26px,3.6vw,34px)/1.05 'Chakra Petch',sans-serif;margin:0;color:var(--c)}
+.ch .n{justify-self:start;font:700 15px 'Chakra Petch',sans-serif;background:var(--c);color:#12131f;border-radius:7px;padding:1px 8px}
+.ch p{margin:0;color:var(--mut);font-size:15px;justify-self:end;text-align:right}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,300px),1fr));gap:16px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;overflow:hidden;display:flex;flex-direction:column;transition:border-color .2s,box-shadow .2s}
+.card.on{border-color:var(--c);box-shadow:0 0 0 2px var(--c),0 18px 40px -18px var(--c)}
+.scr{position:relative;aspect-ratio:16/10;background:#12141f}
+.scr canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+.card.on canvas{touch-action:none}
+.play{position:absolute;inset:0;border:0;background:linear-gradient(180deg,rgba(12,13,23,.15),rgba(12,13,23,.65));display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;cursor:pointer}
+.play .tri{width:56px;height:56px;border-radius:50%;background:var(--c);display:grid;place-items:center;box-shadow:0 8px 20px -6px rgba(0,0,0,.6);transition:transform .15s}
+.play .tri::after{content:'';margin-left:5px;border-left:17px solid #12131f;border-top:11px solid transparent;border-bottom:11px solid transparent}
+.play:hover .tri{transform:scale(1.08)}
+.play b{font:700 14px 'Chakra Petch',sans-serif;letter-spacing:.02em;text-shadow:0 1px 3px #000}
+.card.on .play{display:none}
+.tools{position:absolute;top:6px;right:6px;display:none;gap:6px}
+.card.on .tools{display:flex}
+.tools button{width:34px;height:30px;padding:0;border-radius:8px;border:0;background:rgba(12,13,23,.72);font-size:16px;line-height:1;cursor:pointer;display:grid;place-items:center}
+.pad{display:none;justify-content:space-between;align-items:center;gap:10px;padding:10px 12px;background:var(--deep);border-top:1px solid var(--line);touch-action:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}
+.card.on .pad.has{display:flex}
+.pl,.pr{display:flex;gap:10px;align-items:center}
+.pad b{display:grid;place-items:center;width:46px;height:46px;border-radius:12px;background:#262a42;font-size:17px;cursor:pointer;touch-action:none;box-shadow:inset 0 -3px 0 rgba(0,0,0,.3)}
+.pad b.dn{background:#3d4370;transform:translateY(1px);box-shadow:none}
+.pad b.ab{width:58px;height:58px;border-radius:50%;background:var(--c);color:#12131f;font-size:12px;line-height:1.05;text-align:center;padding:4px;font-weight:700}
+.pad b.ab.dn{filter:brightness(1.25)}
+.dp{display:grid;grid-template-areas:". u ." "l . r" ". d .";grid-template-columns:repeat(3,46px);grid-template-rows:repeat(3,40px);gap:3px}
+.dp b{width:46px;height:40px}
+.hp{display:flex;gap:8px}
+.info{padding:12px 14px 16px;display:flex;flex-direction:column;gap:6px;flex:1}
+.info h3{font:700 19px/1.15 'Chakra Petch',sans-serif;margin:0;text-wrap:balance}
+.info p{margin:0;font-size:14.5px;color:#cfd0e3}
+.info .ex{color:var(--mut);font-size:13.5px}
+.info .ex b{color:var(--c);font-weight:600}
+.info .how{margin-top:auto;font-size:13.5px;background:#1d2036;border-left:3px solid var(--c);padding:7px 9px;border-radius:6px;color:var(--ink)}
+.subnav{display:flex;flex-wrap:wrap;gap:8px;margin:-4px 0 18px}
+.subnav a{display:inline-flex;align-items:center;gap:7px;min-height:36px;padding:0 12px;border-radius:10px;border:1px dashed var(--c);color:var(--c);text-decoration:none;font-size:14px;font-weight:600}
+.subnav a span{font-size:12px;opacity:.8}
+.sub{margin-top:28px;padding:16px;border-radius:16px;background:linear-gradient(180deg,rgba(255,255,255,.035),transparent 70%);border:1px solid var(--line);border-top:3px solid var(--c)}
+.grid+.sub{margin-top:32px}
+.sh{display:grid;grid-template-columns:auto 1fr;align-items:baseline;gap:2px 12px;margin-bottom:14px}
+.sh h3{font:700 22px/1.1 'Chakra Petch',sans-serif;margin:0}
+.sh span{font-size:13.5px;color:var(--c);font-weight:600}
+.sh p{grid-column:1/-1;margin:0;color:var(--mut);font-size:14.5px;max-width:75ch}
+.info .vt{font-size:12.5px;font-weight:600;color:var(--c)}
+@media(max-width:600px){.sub{padding:12px 10px;margin-left:-6px;margin-right:-6px}}
+.empty{padding:60px 0;text-align:center;color:var(--mut)}
+footer{max-width:1240px;margin:0 auto;padding:0 max(5vw,16px) 48px;color:var(--mut);font-size:14px}
+@media(max-width:820px){.hero-in{grid-template-columns:minmax(0,1fr)}.ch{grid-template-columns:auto 1fr}.ch p{grid-column:1/-1;justify-self:start;text-align:left}}
+@media(max-width:600px){.index{grid-template-columns:repeat(auto-fill,minmax(98px,1fr))}.index a{min-height:58px}.index b{font-size:14px}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<header class="hero">
+<div class="hero-in">
+<div>
+<h1>La biblia de las mecánicas de juego</h1>
+<p class="lead"><span id="total"></span> mecánicas ordenadas en <span id="ncat"></span> familias, con un índice de <span id="ngames2"></span> juegos. Las mecánicas con muchas formas de resolverse (cerraduras, hackeo, saltos, cámaras…) se agrupan en subcategorías de variantes. Cada ficha explica la idea, cita juegos donde aparece y lleva dentro una pequeña demo que puedes jugar ahí mismo.</p>
+<p class="keys">En el móvil: toca la pantalla de la demo y usa los botones que aparecen debajo. Con teclado: <kbd>←↑→↓</kbd> o <kbd>WASD</kbd>, <kbd>Z</kbd>/<kbd>Espacio</kbd> = A, <kbd>X</kbd>/<kbd>Shift</kbd> = B, <kbd>Esc</kbd> cierra.</p>
+</div>
+<nav class="index" id="index" aria-label="Índice de familias"></nav>
+</div>
+</header>
+<div class="mbar"><button class="btn" id="menuBtn" type="button" aria-controls="side" aria-expanded="false"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>Índice</button><label class="search"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg><input class="qin" type="search" placeholder="Buscar" aria-label="Buscar mecánica"></label></div>
+<div class="scrim" id="scrim" hidden></div>
+<div class="layout">
+<aside class="side" id="side" aria-label="Categorías y subcategorías">
+<div class="sbox"><div class="shead"><b>Índice</b><button class="x" id="closeSide" type="button" aria-label="Cerrar índice">✕</button></div><label class="search"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg><input class="qin" type="search" placeholder="Buscar mecánica o juego" aria-label="Buscar mecánica"></label><div class="srow"><button class="btn rnd" type="button">Al azar</button><span class="count"></span></div><div class="tabs" role="tablist" aria-label="Ver índice por"><button type="button" role="tab" class="tab" id="tab-toc" aria-controls="toc" aria-selected="true">Categorías</button><button type="button" role="tab" class="tab" id="tab-games" aria-controls="games" aria-selected="false">Juegos <span id="ngames"></span></button></div></div>
+<nav class="toc" id="toc" role="tabpanel" aria-labelledby="tab-toc"></nav><div class="games" id="games" role="tabpanel" aria-labelledby="tab-games" hidden><div class="gtools"><label class="search"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg><input id="gq" type="search" placeholder="Filtrar juegos" aria-label="Filtrar la lista de juegos"></label><div class="gsort"><button type="button" data-s="n" class="on" aria-pressed="true">Más mecánicas</button><button type="button" data-s="a" aria-pressed="false">A–Z</button></div></div><div class="glist" id="glist"></div></div>
+</aside>
+<main id="main"></main>
+</div>
+<p class="empty" id="empty" hidden style="max-width:1440px;margin:0 auto">No hay ninguna mecánica que coincida con esa búsqueda.</p>
+<footer>Las demos son bocetos mínimos hechos para entender cada mecánica, no recreaciones de los juegos citados.</footer>
+<script>
+/*JS*/
+</script>
+</body>
+</html>
